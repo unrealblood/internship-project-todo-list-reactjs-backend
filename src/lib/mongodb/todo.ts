@@ -22,7 +22,7 @@ export async function getUserAllTodos(userId: string): Promise<TodoType[]> {
     }
 }
 
-export async function addTodo(userId: string, content: string, completed: boolean): Promise<boolean> {
+export async function addTodo(userId: string, content: string, completed: boolean): Promise<{success: boolean, insertedId: string}> {
     const client = await getMongoDBClient();
 
     try {
@@ -36,7 +36,7 @@ export async function addTodo(userId: string, content: string, completed: boolea
 
         const result = await db.collection<TodoType>("todos").insertOne({...newTodo, userId: ObjectId.createFromHexString(userId)});
 
-        return result.acknowledged;
+        return {success: result.acknowledged, insertedId: result.insertedId.toString()};
     }
     catch(ex) {
         if(ex instanceof Error) {

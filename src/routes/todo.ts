@@ -17,7 +17,7 @@ todoRouter.post("/add-todo", async (req, res) => {
     const result = await addTodo(userId, content, completed);
 
     if(result) {
-        return res.json({msg: "Successfully added the todo."});
+        return res.json({success: result.success, insertedId: result.insertedId, msg: "Successfully added the todo."});
     }
     else {
         return res.json({error: "Failed to add todo."});
