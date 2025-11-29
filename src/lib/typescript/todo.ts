@@ -1,5 +1,7 @@
+import type { ObjectId } from "mongodb";
+
 export type TodoType = {
     content: string,
     completed: boolean,
-    userId: string
+    userId: ObjectId | string
 };

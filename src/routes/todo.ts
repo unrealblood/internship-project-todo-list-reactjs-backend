@@ -1,5 +1,5 @@
 import express from "express";
-import { addTodo, getUserAllTodos } from "../lib/mongodb/todo.ts";
+import { addTodo, getUserAllTodos, markTodoCompleted } from "../lib/mongodb/todo.ts";
 
 const todoRouter = express.Router();
 
@@ -21,6 +21,19 @@ todoRouter.post("/add-todo", async (req, res) => {
     }
     else {
         return res.json({error: "Failed to add todo."});
+    }
+});
+
+todoRouter.post("/mark-completed", async (req, res) => {
+    const { _id, value } = req.body;
+
+    const result = await markTodoCompleted(_id, value);
+
+    if(result) {
+        return res.json({msg: "Successfully marked todo as completed."});
+    }
+    else {
+        return res.json({error: "Failed to mark todo as completed."});
     }
 });
 

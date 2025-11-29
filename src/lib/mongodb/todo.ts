@@ -1,6 +1,7 @@
 import type { TodoType } from "../typescript/todo.ts";
 import { getMongoDBClient } from "./client.ts";
 import { TodoSchema } from "../zod/schemas.ts";
+import { ObjectId } from "mongodb";
 
 export async function getUserAllTodos(userId: string): Promise<TodoType[]> {
     const client = await getMongoDBClient();
@@ -8,7 +9,7 @@ export async function getUserAllTodos(userId: string): Promise<TodoType[]> {
     try {
         const db = client.db();
         
-        const todos = db.collection<TodoType>("todos").find({userId: TodoSchema.parse({userId})}).toArray();
+        const todos = db.collection<TodoType>("todos").find({userId: ObjectId.createFromHexString(userId)}).toArray();
 
         return todos;
     }
@@ -32,10 +33,8 @@ export async function addTodo(userId: string, content: string, completed: boolea
             content,
             completed
         });
-        console.log("USERID");
-        console.log(newTodo.userId);
 
-        const result = await db.collection<TodoType>("todos").insertOne(newTodo);
+        const result = await db.collection<TodoType>("todos").insertOne({...newTodo, userId: ObjectId.createFromHexString(userId)});
 
         return result.acknowledged;
     }
@@ -45,5 +44,24 @@ export async function addTodo(userId: string, content: string, completed: boolea
         }
 
         throw new Error("Failed to add todo. Unknow error.");
+    }
+}
+
+export async function markTodoCompleted(_id: string, value: boolean): Promise<boolean> {
+    const client = await getMongoDBClient();
+
+    try {
+        const db = client.db();
+
+        const result = await db.collection<TodoType>("todos").updateOne({_id: ObjectId.createFromHexString(_id)}, {$set: {completed: value}});
+
+        return result.acknowledged;
+    }
+    catch(ex) {
+        if(ex instanceof Error) {
+            throw new Error("Failed to mark todo as completed. Error: " + ex.message);
+        }
+
+        throw new Error("Failed to mark todo as completed. Unknow error.");
     }
 }
