@@ -1,5 +1,5 @@
 import express from "express";
-import { addTodo, getUserAllTodos, markTodoCompleted, updateTodo } from "../lib/mongodb/todo.ts";
+import { addTodo, deleteTodo, getUserAllTodos, markTodoCompleted, updateTodo } from "../lib/mongodb/todo.ts";
 
 const todoRouter = express.Router();
 
@@ -37,7 +37,7 @@ todoRouter.post("/mark-completed", async (req, res) => {
     }
 });
 
-todoRouter.post("/update-todo", async (req, res) => {
+todoRouter.put("/update-todo", async (req, res) => {
     const { _id, content } = req.body;
 
     const result = await updateTodo(_id, content);
@@ -47,6 +47,19 @@ todoRouter.post("/update-todo", async (req, res) => {
     }
     else {
         return res.json({error: "Failed to update the todo."});
+    }
+});
+
+todoRouter.delete("/delete-todo/:todoId", async (req, res) => {
+    const { todoId } = req.params;
+
+    const result = await deleteTodo(todoId);
+
+    if(result) {
+        return res.json({msg: "Successfully deleted the todo."});
+    }
+    else {
+        return res.json({error: "Failed to delete the todo."});
     }
 });
 
