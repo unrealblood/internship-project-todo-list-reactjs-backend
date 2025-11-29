@@ -65,3 +65,22 @@ export async function markTodoCompleted(_id: string, value: boolean): Promise<bo
         throw new Error("Failed to mark todo as completed. Unknow error.");
     }
 }
+
+export async function updateTodo(_id: string, content: string): Promise<boolean> {
+    const client = await getMongoDBClient();
+
+    try {
+        const db = client.db();
+
+        const result = await db.collection<TodoType>("todos").updateOne({_id: ObjectId.createFromHexString(_id)}, {$set: {content}});
+
+        return result.acknowledged;
+    }
+    catch(ex) {
+        if(ex instanceof Error) {
+            throw new Error("Failed to mark todo as completed. Error: " + ex.message);
+        }
+
+        throw new Error("Failed to mark todo as completed. Unknow error.");
+    }
+}
