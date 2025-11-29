@@ -12,9 +12,9 @@ todoRouter.get("/get-todos/:uID", async (req, res) => {
 });
 
 todoRouter.post("/add-todo", async (req, res) => {
-    const { _id, userId, content, completed } = req.body;
+    const { userId, content, completed } = req.body;
 
-    const result = await addTodo(_id, userId, content, completed);
+    const result = await addTodo(userId, content, completed);
 
     if(result) {
         return res.json({msg: "Successfully added the todo."});

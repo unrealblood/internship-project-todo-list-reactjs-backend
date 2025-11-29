@@ -21,14 +21,13 @@ export async function getUserAllTodos(userId: string): Promise<TodoType[]> {
     }
 }
 
-export async function addTodo(_id: string, userId: string, content: string, completed: boolean): Promise<boolean> {
+export async function addTodo(userId: string, content: string, completed: boolean): Promise<boolean> {
     const client = await getMongoDBClient();
 
     try {
         const db = client.db();
 
         const newTodo: TodoType = TodoSchema.parse({
-            _id,
             userId,
             content,
             completed

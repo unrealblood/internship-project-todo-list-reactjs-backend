@@ -1,7 +1,6 @@
 import z from "zod";
 
 export const TodoSchema = z.object({
-    _id: z.string(),
     content: z.string(),
     completed: z.boolean(),
     userId: z.string()
